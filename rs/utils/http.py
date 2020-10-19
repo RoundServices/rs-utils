@@ -38,9 +38,10 @@ def to_base64_creds(user, password):
 	return base64_bytes.decode('ascii')
 
 
-def wait_for_endpoint(url, iterations, interval, logger):
+def wait_for_endpoint(url, iterations, interval, logger, headers={}):
 	"""
 	Wait for a http endpoint until is up and running
+	:param headers: http headers
 	:param url: http endpoint
 	:param iterations: number of retries
 	:param interval: waiting interval between retries
@@ -52,7 +53,7 @@ def wait_for_endpoint(url, iterations, interval, logger):
 		logger.debug("Iteration #: {}", iteration)
 		try:
 			logger.trace("Calling URL: {} with method: GET", url)
-			http_response = requests.request("GET", url, verify=False)
+			http_response = requests.request("GET", url, verify=False, headers=headers)
 			logger.trace("http_response: {}, type: {}", http_response, type(http_response))
 			response_code = http_response.status_code
 			logger.trace("response_code: {}, type: {}", response_code, type(response_code))
