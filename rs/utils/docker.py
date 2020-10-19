@@ -7,7 +7,7 @@
 from rs.utils import os_cmd
 
 
-def stop_docker_container(container_name, logger):
+def stop_container(container_name, logger):
     """
     stop a docker container
     :param container_name: container to be stopped
@@ -17,7 +17,7 @@ def stop_docker_container(container_name, logger):
     return execute_container_action(container_name, "stop", logger)
 
 
-def restart_docker_container(container_name, logger):
+def restart_container(container_name, logger):
     """
     restart a docker container
     :param container_name: container to be restarted
@@ -27,7 +27,7 @@ def restart_docker_container(container_name, logger):
     return execute_container_action(container_name, "restart", logger)
 
 
-def remove_docker_container(container_name, logger):
+def remove_container(container_name, logger):
     """
     remove a docker container
     :param container_name: container to be removed
@@ -54,7 +54,7 @@ def execute_container_action(container_name, command_action, logger):
     return return_value
 
 
-def run_docker_container(container_name, container_image, docker_parameters, cmd_parameters, logger, pull_image=True):
+def run_container(container_name, container_image, docker_parameters, cmd_parameters, logger, pull_image=True):
     """
     run a docker container
     :param container_name: container name
