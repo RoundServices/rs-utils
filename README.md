@@ -4,8 +4,9 @@ Modules used across all RS IAM deployment projects
 ## Setup
 
 ### Pre-requisites
-- Python > 2.7
-- PIP (package-management system)
+- Python > 3.x
+- python-devel
+- pip3 (package-management system)
 
 ## Deploy
 To install/upgrade Round Services &copy; python-commons library, execute the following command on your server
@@ -17,6 +18,13 @@ pip install --upgrade git+ssh://git@github.com:RoundServices/rs-utils.git@master
 - HTTPS deploy
 ```sh
 pip install --upgrade git+https://github.com/RoundServices/rs-utils.git@master
+```
+
+- zip file downloaded from github
+```sh
+unzip -d ./ ./rs-utils-main.zip
+pip3 install --upgrade --force-reinstall ./rs-utils-main/.
+rm -rf ./rs-utils-main/
 ```
 
 ## Coding
