@@ -57,7 +57,7 @@ def wait_for_endpoint(url, iterations, interval, logger, headers={}):
 			logger.trace("http_response: {}, type: {}", http_response, type(http_response))
 			response_code = http_response.status_code
 			logger.trace("response_code: {}, type: {}", response_code, type(response_code))
-			if response_code.ok:
+			if 200 <= response_code < 300:
 				endpoint_ready = True
 				break
 		except:
