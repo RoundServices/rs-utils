@@ -9,7 +9,6 @@ import sys
 import re
 from os.path import isfile, join, isdir
 from os import listdir
-from rs.utils.basics import Logger
 from rs.utils import validators
 
 
