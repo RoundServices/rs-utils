@@ -13,11 +13,11 @@ To install/upgrade Round Services &copy; python-commons library, execute the fol
 
 - SSH deploy (last version)
 ```sh
-pip install --upgrade git+ssh://git@github.com:RoundServices/rs-utils.git@master
+pip install --upgrade git+ssh://git@github.com:RoundServices/rs-utils.git@main
 ```
 - HTTPS deploy
 ```sh
-pip install --upgrade git+https://github.com/RoundServices/rs-utils.git@master
+pip install --upgrade git+https://github.com/RoundServices/rs-utils.git@main
 ```
 
 - zip file downloaded from github
