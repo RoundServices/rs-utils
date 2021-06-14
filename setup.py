@@ -14,7 +14,7 @@ setup(
     author='Round Services',
     author_email='esandoval@roundservices.biz',
     license='MIT License',
-    install_requires=['requests', 'psutil'],
+    install_requires=['requests', 'psutil', 'PyJWT'],
     packages=['rs', 'rs.utils'],
     zip_safe=False,
     python_requires='>=2.7'

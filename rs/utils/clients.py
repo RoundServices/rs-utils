@@ -6,6 +6,7 @@
 
 import requests
 import json
+import jwt
 from rs.utils import http, validators
 from rs.utils.basics import Logger
 
@@ -77,6 +78,27 @@ class OIDCClient:
             'Connection': "keep-alive",
             'cache-control': "no-cache"
         }
+
+    def validate_jwt(self, claims, token, error_claim=None):
+        """
+        Validates a jwt based on the presence of claims' list and the ausence of an error_claim inside the token
+        :param claims: list of strings that represent claims inside the token
+        :param token: jwt to be decoded and validated
+        :param error_claim: default None, is an string that represents a claim that warns about an error inside the token
+        :return: Boolean
+        """
+        self.logger.debug('validate_jwt - token: {} - claims: {} - error_claim: {}', token, claims, error_claim)
+        try:
+            decoded_token = jwt.decode(token, verify=False)
+        except Exception as err:
+            self.logger.error("Could not decode token err msg: {}", err.message)
+            return False
+        self.logger.debug('Decoded token: {}', decoded_token)
+        for key in claims:
+            if key not in json:
+                self.logger.error("{} key is not included in json", key)
+                return False
+        return False if error_claim is not None and error_claim in decoded_token else True
 
 
 class UMAClient:
