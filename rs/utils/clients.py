@@ -89,7 +89,7 @@ class OIDCClient:
         """
         self.logger.debug('validate_jwt - token: {} - claims: {} - error_claim: {}', token, claims, error_claim)
         try:
-            decoded_token = jwt.decode(token, verify=False)
+            decoded_token = jwt.decode(token, options={"verify_signature": False})
         except Exception as err:
             self.logger.error("Could not decode token err msg: {}", err)
             return False
