@@ -73,10 +73,13 @@ class Logger(object):
             log_line = "{} || {} || {} || {} || {}".format(datetime.now().isoformat(sep=' ', timespec='milliseconds'),
                                                            function_log_level, self._name, function,
                                                            msg.format(*args) if len(args) > 0 else msg)
-            print(log_line)
-            f = open(self.log_path, 'a')
-            f.write(log_line + "\n")
-            f.close()
+            try:
+                print(log_line)
+                f = open(self.log_path, 'a')
+                f.write(log_line + "\n")
+                f.close()
+            except Exception:
+                pass
 
     def _log_level(self, argument):
         """
