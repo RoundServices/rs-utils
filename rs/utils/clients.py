@@ -95,7 +95,7 @@ class OIDCClient:
             return False
         self.logger.debug('Decoded token: {}', decoded_token)
         for key in claims:
-            if key not in json:
+            if key not in decoded_token:
                 self.logger.error("{} key is not included in json", key)
                 return False
         return False if error_claim is not None and error_claim in decoded_token else True
