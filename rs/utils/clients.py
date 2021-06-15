@@ -91,7 +91,7 @@ class OIDCClient:
         try:
             decoded_token = jwt.decode(token, verify=False)
         except Exception as err:
-            self.logger.error("Could not decode token err msg: {}", err.message)
+            self.logger.error("Could not decode token err msg: {}", err)
             return False
         self.logger.debug('Decoded token: {}', decoded_token)
         for key in claims:
