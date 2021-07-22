@@ -15,7 +15,7 @@ class OIDCClient:
     """
     OIDCClient has multiple basic functionality that can be useful for OpenID python interactions
     """
-    def __init__(self, idp_url, logger=Logger("OIDCClient")):
+    def __init__(self, idp_url, logger=Logger("OIDCClient"), verify=True):
         """
         Params
         :param idp_url: for instance 'https://myidp.myorg.com'
@@ -23,6 +23,7 @@ class OIDCClient:
         """
         self.idp_url = idp_url
         self.logger = logger
+        self.verify = verify
         self.well_known = self.get_well_known()
 
     def get_well_known(self):
@@ -32,7 +33,7 @@ class OIDCClient:
         """
         url = self.idp_url + "/.well-known/openid-configuration"
         self.logger.trace("GET request to {}", url)
-        response = requests.get(url, verify=False)
+        response = requests.get(url, verify=self.verify)
         http.validate_response(response, self.logger, "Can not reach Wellknown endpoint, with idp_url {} - DNS or host file?", self.idp_url)
         well_known_json = response.json()
         self.logger.trace("obtained wellknown info: {}", well_known_json)
@@ -59,7 +60,7 @@ class OIDCClient:
         for k, v in params_in_dict.items():
             payload = "{}={}&{}".format(k, v, payload)
         self.logger.trace("about to request acc_token with this payload {}", payload)
-        response = requests.request("POST", self.well_known['token_endpoint'], data=payload, headers=self._get_basic_header(b64_client_credentials), verify=False)
+        response = requests.request("POST", self.well_known['token_endpoint'], data=payload, headers=self._get_basic_header(b64_client_credentials), verify=self.verify)
         http.validate_response(response, self.logger, "Can not get access_token with these values {} - HTTP {}", payload, response.status_code)
         response_json = response.json()
         self.logger.trace("JSON Response obj is: {}", response_json)
@@ -106,7 +107,7 @@ class UMAClient:
     Provides basic UMA interaction on a protected UMA API - clients authenticate with basic_credentials
     """
 
-    def __init__(self, api_base_endpoint, b64_client_credentials, logger=Logger("UMAClient")):
+    def __init__(self, api_base_endpoint, b64_client_credentials, logger=Logger("UMAClient"), verify=True):
         """
         Constructor
         :param api_base_endpoint: for instance "https://myidp.org.com/identity/restv1/api/v1
@@ -116,6 +117,7 @@ class UMAClient:
         self.api_base_endpoint = api_base_endpoint
         self.b64_client_credentials = b64_client_credentials
         self.logger = logger
+        self.verify = verify
 
     def get_rpt(self, path, operation="GET"):
         """
@@ -128,7 +130,7 @@ class UMAClient:
         """
         url = self.api_base_endpoint + "/" + path
         self.logger.trace("Starting RPT with url {} with operation: {}", url, operation)
-        response = requests.request(operation, url, data="", headers=self._get_operation_headers(""), verify=False)
+        response = requests.request(operation, url, data="", headers=self._get_operation_headers(""), verify=self.verify)
         if response.status_code != 401:
             response.close()
             validators.raise_and_log(self.logger, IOError, "Can not get ticket to be exchanged for RPT, maybe UMA not enabled? - HTTP {}", response.status_code)
@@ -199,7 +201,7 @@ class UMAClient:
             url,
             data=body,
             headers=self._get_operation_headers(self.get_rpt(sub_path, operation) if rpt is None else rpt),
-            verify=False
+            verify=self.verify
         )
         http.validate_response(response, self.logger, "Execute Failed - HTTP Code: {}".format(response.status_code))
         try:
