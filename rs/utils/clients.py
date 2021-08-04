@@ -143,7 +143,7 @@ class UMAClient:
             'grant_type': 'urn:ietf:params:oauth:grant-type:uma-ticket',
             'ticket': ticket
         }
-        return OIDCClient(idp_url, self.logger).request_to_token_endpoint(self.b64_client_credentials, payload)['access_token']
+        return OIDCClient(idp_url, self.logger, self.verify).request_to_token_endpoint(self.b64_client_credentials, payload)['access_token']
 
     def get(self, sub_path):
         """
