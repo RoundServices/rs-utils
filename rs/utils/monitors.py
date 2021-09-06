@@ -13,7 +13,7 @@ class OIDCMonitor:
     OIDCMonitor provides functions for idp lambda monitoring
     """
 
-    def __init__(self, logger, cloudwatch, idp_base_url, b64_client_credentials):
+    def __init__(self, logger, cloudwatch, idp_base_url, b64_client_credentials, verify=False):
         """
         Params
         :param logger =  RoundServices log.
@@ -23,7 +23,7 @@ class OIDCMonitor:
         """
         self.logger = logger
         self.cloudwatch = cloudwatch
-        self.oidc_client = OIDCClient(idp_base_url, logger)
+        self.oidc_client = OIDCClient(idp_base_url, logger, verify)
         self.b64_client_credentials = b64_client_credentials
 
     def _cw_put_metric_data(self, metric, value):
