@@ -44,6 +44,18 @@ def install_yum_package(package_name, logger):
 		execute_in_bash(command, logger)
 
 
+def install_pip_library(library_name, logger):
+	"""
+	install a PIP library
+	:param library_name: library_name name to be installed
+	:param logger: rs log obj
+	:return: None
+	"""
+	command = "python3 -m pip install {}".format(library_name)
+	logger.debug("Installing library '{}' using command '{}'", library_name, command)
+	execute_in_bash(command, logger)
+
+
 def check_local_rpm(rpm_path, logger):
 	"""
 	check if local rpm exists
