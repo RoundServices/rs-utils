@@ -154,6 +154,24 @@ class Properties:
                     self.logger.trace("Key: {} - Value: {} loaded", key, value)
         return props
 
+    def replace_dict(self, json_obj):
+        props_key_separator = dict()
+        for k, v in self.properties.items():
+            new_key = self.param_prefix + k + self.param_suffix
+            props_key_separator[new_key] = v
+        for k in json_obj:
+            v = json_obj[k]
+            keys_to_replace = set(re.findall(re.compile(self.param_prefix + "[\\w.]+" + self.param_suffix), v))
+            pending_keys = keys_to_replace.difference(set(props_key_separator.keys()))
+            if len(pending_keys) > 0:
+                validators.raise_and_log(self.logger, ValueError, """
+                The following values are not present in local.properties nor sample.properties, but are required by running app:
+                {}
+                """.format(pending_keys))
+            for key in keys_to_replace:
+                json_obj[k] = v.replace(key, props_key_separator.get(key))
+        return json_obj
+
     def _replace_file(self, file_path):
         """
         Replace key values from Properties with its related value on a single file
