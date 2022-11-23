@@ -184,3 +184,20 @@ class Properties:
         file_out.write(data)
         file_out.close()
         self.logger.trace("{} successfully replaced with Property values", file_path)
+
+    def write(self, file_path):
+        """
+        writes the properties obj on a file as regular properties file
+        Args:
+            file_path: path to file to be created with properties
+        """
+        self.logger.debug("writing properties on {}", file_path)
+        properties = ""
+
+        for k, v in self.properties.items():
+            properties = "{}\n{}={}".format(properties, k, v)
+
+        file_out = open(file_path, "wt")
+        file_out.write(properties)
+        file_out.close()
+        self.logger.debug("properties successfully wrote in {}", file_path)
