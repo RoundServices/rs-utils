@@ -13,7 +13,7 @@ Modules used across all RS IAM deployment projects
 ## Deploy
 
 ```sh
-pip install --upgrade --force-reinstall git+https://github.com/RoundServices/rs-utils.git@main
+python3 -m pip install --upgrade --force-reinstall git+https://github.com/RoundServices/rs-utils.git@main
 ```
 
 ## Coding

@@ -1,5 +1,5 @@
-# rs-utils is available under the MIT License. https://gitlab.com/roundservices/rs-utils/
-# Copyright (c) 2020, Round Services LLC - https://roundservices.biz/
+# rs-utils is available under the MIT License. https://github.com/RoundServices/rs-utils/
+# Copyright (c) 2022, Round Services LLC - https://roundservices.biz/
 #
 # Author: Ezequiel O Sandoval - esandoval@roundservices.biz
 #
