@@ -63,7 +63,7 @@ class OIDCClient:
         response = requests.request("POST", self.well_known['token_endpoint'], data=payload, headers=self._get_basic_header(b64_client_credentials), verify=self.verify)
         http.validate_response(response, self.logger, "Can not get access_token with these values {} - HTTP {}", payload, response.status_code)
         response_json = response.json()
-        self.logger.trace("JSON Response obj is: {}", response_json)
+        self.logger.debug("JSON Response obj is: {}", response_json)
         return response_json
 
     def _get_basic_header(self, credentials):
@@ -107,7 +107,7 @@ class UMAClient:
     Provides basic UMA interaction on a protected UMA API - clients authenticate with basic_credentials
     """
 
-    def __init__(self, api_base_endpoint, b64_client_credentials, logger=Logger("UMAClient"), verify=True):
+    def __init__(self, api_base_endpoint, b64_client_credentials, logger=Logger("UMAClient"), verify=True, is_gluu_45=False):
         """
         Constructor
         :param api_base_endpoint: for instance "https://myidp.org.com/identity/restv1/api/v1
@@ -118,6 +118,8 @@ class UMAClient:
         self.b64_client_credentials = b64_client_credentials
         self.logger = logger
         self.verify = verify
+        self.is_gluu_45 = is_gluu_45
+        self.logger.debug("is_gluu_45 deployment: {}", is_gluu_45)
 
     def get_rpt(self, path, operation="GET"):
         """
@@ -128,21 +130,48 @@ class UMAClient:
         :param operation: Default GET, can be one of HTTP Methods
         :return: an String that represents a valid access_token for that resource. otherwise raise an error.
         """
-        url = self.api_base_endpoint + "/" + path
-        self.logger.trace("Starting RPT with url {} with operation: {}", url, operation)
-        response = requests.request(operation, url, data="", headers=self._get_operation_headers(""), verify=self.verify)
-        if response.status_code != 401:
+
+        if not self.is_gluu_45:
+            url = self.api_base_endpoint + "/" + path
+            self.logger.trace("Starting RPT with url {} with operation: {}", url, operation)
+            response = requests.request(operation, url, data="", headers=self._get_operation_headers(""), verify=self.verify)
+            if response.status_code != 401:
+                response.close()
+                validators.raise_and_log(self.logger, IOError, "Can not get ticket to be exchanged for RPT, maybe UMA not enabled? - HTTP {}", response.status_code)
+            ticket = dict(x.split("=") for x in response.headers['WWW-Authenticate'].split(",")).get(' ticket')
+            self.logger.trace("Ticket value is {}", ticket)
             response.close()
-            validators.raise_and_log(self.logger, IOError, "Can not get ticket to be exchanged for RPT, maybe UMA not enabled? - HTTP {}", response.status_code)
-        ticket = dict(x.split("=") for x in response.headers['WWW-Authenticate'].split(",")).get(' ticket')
-        self.logger.trace("Ticket value is {}", ticket)
-        response.close()
-        idp_url = "/".join(self.api_base_endpoint.split("/", 3)[:3])
-        self.logger.trace("idp_url is {}", idp_url)
-        payload = {
-            'grant_type': 'urn:ietf:params:oauth:grant-type:uma-ticket',
-            'ticket': ticket
-        }
+            idp_url = "/".join(self.api_base_endpoint.split("/", 3)[:3])
+            self.logger.trace("idp_url is {}", idp_url)
+            payload = {
+                'grant_type': 'urn:ietf:params:oauth:grant-type:uma-ticket',
+                'ticket': ticket
+            }
+        else:
+            idp_url = "/".join(self.api_base_endpoint.split("/", 3)[:3])
+            self.logger.trace("idp_url is {}", idp_url)
+            payload = {
+                'grant_type': 'client_credentials',
+                'scope': '\
+                https://gluu.org/auth/oxtrust.attribute.read \
+                https://gluu.org/auth/oxtrust.attribute.write \
+                https://gluu.org/auth/oxtrust.client.read \
+                https://gluu.org/auth/oxtrust.client.write \
+                https://gluu.org/auth/oxtrust.scope.read \
+                https://gluu.org/auth/oxtrust.scope.write \
+                https://gluu.org/auth/oxtrust.customscript.read \
+                https://gluu.org/auth/oxtrust.customscript.write \
+                https://gluu.org/auth/oxtrust.saml.read \
+                https://gluu.org/auth/oxtrust.saml.write \
+                https://gluu.org/auth/oxtrust.authenticationmethod.read \
+                https://gluu.org/auth/oxtrust.authenticationmethod.write \
+                https://gluu.org/auth/oxtrust.OxauthjsonSetting.read \
+                https://gluu.org/auth/oxtrust.oxauthjsonSetting.write \
+                https://gluu.org/auth/oxtrust.oxtrustjsonSetting.write \
+                https://gluu.org/auth/oxtrust.oxtrustjsonSetting.read \
+                https://gluu.org/auth/oxtrust.oxtrustsetting.read \
+                https://gluu.org/auth/oxtrust.oxtrustsetting.write'
+            }
         return OIDCClient(idp_url, self.logger, self.verify).request_to_token_endpoint(self.b64_client_credentials, payload)['access_token']
 
     def get(self, sub_path):
