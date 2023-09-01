@@ -155,22 +155,24 @@ class UMAClient:
                 'scope': '\
                 https://gluu.org/auth/oxtrust.attribute.read \
                 https://gluu.org/auth/oxtrust.attribute.write \
-                https://gluu.org/auth/oxtrust.client.read \
-                https://gluu.org/auth/oxtrust.client.write \
-                https://gluu.org/auth/oxtrust.scope.read \
-                https://gluu.org/auth/oxtrust.scope.write \
-                https://gluu.org/auth/oxtrust.customscript.read \
-                https://gluu.org/auth/oxtrust.customscript.write \
-                https://gluu.org/auth/oxtrust.saml.read \
-                https://gluu.org/auth/oxtrust.saml.write \
                 https://gluu.org/auth/oxtrust.authenticationmethod.read \
                 https://gluu.org/auth/oxtrust.authenticationmethod.write \
+                https://gluu.org/auth/oxtrust.client.read \
+                https://gluu.org/auth/oxtrust.client.write \
+                https://gluu.org/auth/oxtrust.customscript.read \
+                https://gluu.org/auth/oxtrust.customscript.write \
+                https://gluu.org/auth/oxtrust.ldapauthentication.read \
+                https://gluu.org/auth/oxtrust.ldapauthentication.write \
                 https://gluu.org/auth/oxtrust.OxauthjsonSetting.read \
                 https://gluu.org/auth/oxtrust.oxauthjsonSetting.write \
                 https://gluu.org/auth/oxtrust.oxtrustjsonSetting.write \
                 https://gluu.org/auth/oxtrust.oxtrustjsonSetting.read \
                 https://gluu.org/auth/oxtrust.oxtrustsetting.read \
-                https://gluu.org/auth/oxtrust.oxtrustsetting.write'
+                https://gluu.org/auth/oxtrust.oxtrustsetting.write \
+                https://gluu.org/auth/oxtrust.saml.read \
+                https://gluu.org/auth/oxtrust.saml.write \
+                https://gluu.org/auth/oxtrust.scope.read \
+                https://gluu.org/auth/oxtrust.scope.write'
             }
         return OIDCClient(idp_url, self.logger, self.verify).request_to_token_endpoint(self.b64_client_credentials, payload)['access_token']
 
