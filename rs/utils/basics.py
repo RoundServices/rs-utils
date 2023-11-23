@@ -168,7 +168,12 @@ class Properties:
         file_in = open(file_path, "rt")
         data = file_in.read()
         self.logger.trace("{} successfully read", file_path)
-        keys_to_replace = set(re.findall(re.compile(self.param_prefix + "[\\w.]+" + self.param_suffix), data))
+        regex_to_use = re.escape(self.param_prefix) + "[\\w.]+" + re.escape(self.param_suffix)
+        self.logger.trace(regex_to_use)
+        keys_to_replace_repeated = re.findall(re.compile(regex_to_use), data)
+        self.logger.trace(keys_to_replace_repeated)
+        keys_to_replace = set(keys_to_replace_repeated)
+        self.logger.trace(keys_to_replace)
         pending_keys = keys_to_replace.difference(set(props_key_separator.keys()))
         if len(pending_keys) > 0:
             validators.raise_and_log(self.logger, ValueError, """
